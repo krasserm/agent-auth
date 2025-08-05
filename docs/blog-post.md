@@ -29,7 +29,7 @@ Disclaimer: I'm not affiliated with Composio, I'm just a happy user. What they d
 
 https://github.com/user-attachments/assets/652a0cc1-0579-418d-a3fb-b15aaaddfe31
 
-The complete code for running this example is [in this repository](https://github.com/...).
+The complete code for running this example is [in this repository](https://github.com/krasserm/agent-auth).
 
 - [`setup_mcp_server.py`](setup_mcp_server.py) creates MCP servers for Gmail and Google Calendar with the [Composio Python library](https://github.com/ComposioHQ/composio-base-py)
 - [`use_mcp_server_pydantic_ai.py`](use_mcp_server_pydantic_ai.py) runs `o4-mini` as Pydantic AI agent configured with the Gmail and Google Calendar MCP servers
