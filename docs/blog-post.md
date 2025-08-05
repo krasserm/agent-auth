@@ -27,12 +27,12 @@ Disclaimer: I'm not affiliated with Composio, I'm just a happy user. What they d
 
 ## Example
 
-<video src="agent-tools.mp4" controls width="640" height="480"></video>
+https://github.com/user-attachments/assets/652a0cc1-0579-418d-a3fb-b15aaaddfe31
 
-The complete code for running this example is [in this repository](https://github.com/...): 
+The complete code for running this example is [in this repository](https://github.com/...).
 
-- [`setup_mcp_server.py`](setup_mcp_server.py) creates MCP servers for Gmail and Google Calendar with the [Composio Python library](https://github.com/ComposioHQ/composio-base-py).
-- [`use_mcp_server_pydantic_ai.py`](use_mcp_server_pydantic_ai.py) runs `o4-mini` as Pydantic AI agent configured with the Gmail and Google Calendar MCP servers.
+- [`setup_mcp_server.py`](setup_mcp_server.py) creates MCP servers for Gmail and Google Calendar with the [Composio Python library](https://github.com/ComposioHQ/composio-base-py)
+- [`use_mcp_server_pydantic_ai.py`](use_mcp_server_pydantic_ai.py) runs `o4-mini` as Pydantic AI agent configured with the Gmail and Google Calendar MCP servers
 - [`use_mcp_server_gemini.py`](use_mcp_server_gemini.py) runs `gemini-2.5-flash` with the `google-genai` SDK configured with the Google Calendar MCP server.
 
 Here's a brief overview of the key steps, using Google Calendar as an example:
