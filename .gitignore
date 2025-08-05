@@ -1,0 +1,9 @@
+__pycache__/
+build/
+dist/
+.env
+.venv
+.vscode
+node_modules
+sandbox*
+examples/mcp_server_urls.json

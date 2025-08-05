@@ -1,0 +1,13 @@
+[project]
+name = "agent-tools"
+version = "0.1.0"
+description = "Composio examples"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "composio-client>=1.6.0",
+    "google-genai>=1.28.0",
+    "mcp>=1.12.3",
+    "pydantic-ai-slim[openai]>=0.4.11",
+    "python-dotenv>=1.1.1",
+]
