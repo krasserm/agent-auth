@@ -1,14 +1,14 @@
 import asyncio
 import json
-import textwrap
-from dataclasses import asdict
+
+import dotenv
+from aioconsole import ainput, aprint
 
 from pydantic_ai import Agent
 from pydantic_ai.mcp import MCPServerStreamableHTTP
 
 
 async def main():
-    # Load MCP URLs from JSON file
     with open("examples/mcp_server_urls.json", "r") as f:
         mcp_urls = json.load(f)
         gcal_mcp_url = mcp_urls["gcal"]
@@ -21,20 +21,30 @@ async def main():
             MCPServerStreamableHTTP(gmail_mcp_url),
         ]
     )
-    
-    prompt = textwrap.dedent("""
-        List my Sep 2025 calendar events and save them as draft to my gmail account 
-        (subject: Sep 2025 events, recipient: martin@example.com). Show the event
-        titles in your response.
-    """)
-
-    async with agent:
-        result = await agent.run(prompt)
-    
-    print(result.output)
         
-                
+    message_history = []    
+    
+    async with agent:
+        while True:
+            user_input = await ainput("\n👤 You: ")
+            
+            if user_input.lower() in ["exit", "quit", "q"]:
+                await aprint("\n👋 Goodbye!")
+                break
+            
+            if not user_input:
+                continue
+            
+            await aprint("\n🤖 Agent: ", end="", flush=True)
+
+            async with agent.run_stream(user_input, message_history=message_history) as result:
+                async for text in result.stream_text(delta=True):
+                    await aprint(text, end="", flush=True)
+                await aprint()
+
+                message_history.extend(result.new_messages())
+
+
 if __name__ == "__main__":
-    import dotenv
     dotenv.load_dotenv()
     asyncio.run(main())

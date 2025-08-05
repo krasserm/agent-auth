@@ -1,6 +1,6 @@
 # Agent Authorization Without the Pain
 
-Your agent needs to send emails through Gmail. Simple, right? Until you realize you need OAuth flows, token refresh logic, and secure credential storage. Multiply that by every API your agent needs.
+Your agent needs to read from your Google Calendar and send emails through Gmail. Simple, right? Until you realize you need OAuth flows, token refresh logic, and secure credential storage. Multiply that by every API your agent needs.
 
 Connect your agents to 250+ APIs and 3000+ tools with MCP and Composio. Composio manages authorization, remote MCP servers and tool execution, your application focuses on agentic reasoning and tool usage. 
 
@@ -27,11 +27,9 @@ Disclaimer: I'm not affiliated with Composio, I'm just a happy user. What they d
 
 ## Example
 
-...
+<video src="agent-tools.mp4" controls width="640" height="480"></video>
 
-## Implementation
-
-A complete example for setting up Gmail and Google Calendar MCP servers and running agents with them is available [in this repository](https://github.com/...): 
+The complete code for running this example is [in this repository](https://github.com/...): 
 
 - [`setup_mcp_server.py`](setup_mcp_server.py) creates MCP servers for Gmail and Google Calendar with the [Composio Python library](https://github.com/ComposioHQ/composio-base-py).
 - [`use_mcp_server_pydantic_ai.py`](use_mcp_server_pydantic_ai.py) runs `o4-mini` as Pydantic AI agent configured with the Gmail and Google Calendar MCP servers.
