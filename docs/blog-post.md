@@ -2,9 +2,10 @@
 
 Your agent needs to read from your Google Calendar and send emails through Gmail. Simple, right? Until you realize you need OAuth flows, token refresh logic, and secure credential storage. Multiply that by every API your agent needs.
 
-Connect your agents to 250+ APIs and 3000+ tools with MCP and Composio. Composio manages authorization, remote MCP servers and tool execution, your application focuses on agentic reasoning and tool usage. 
+Connect your agents to 250+ APIs and 3000+ tools with [model context protocol](https://modelcontextprotocol.io/) (MCP) and [Composio](https://composio.dev/). Composio handles authorization, remote MCP servers and tool execution, your application focuses on agentic reasoning and tool usage. 
 
-Disclaimer: I'm not affiliated with Composio, I'm just a happy user. What they do is IMO the right separation of concerns when building agentic applications.
+> [!NOTE]  
+> Disclaimer: I'm not affiliated with Composio, I'm just a happy user. What they do is IMO the right separation of concerns when building agentic applications.
 
 ## Architecture
 
@@ -12,38 +13,32 @@ Disclaimer: I'm not affiliated with Composio, I'm just a happy user. What they d
 
 **Your Application**
 - Agents connect to Composio MCP servers and use their tools
-- Agents acts on behalf of users that authorized access to their accounts
+- Agents act on behalf of users that authorized API access
 - Agents focus on reasoning and tool usage, not plumbing
 
 **Composio Layer**
 - MCP servers act as protocol bridges to external APIs
-- Each API has auth configs, with an connected account per user
+- Each API has auth configs, with a connected account per user
 - Auth tokens are stored securely, supporting OAuth2, API keys, etc.
 
 **Key Benefits**
 - No OAuth flows or token management in your code
-- Access 250+ APIs and 3000+ tools through model context protocol (MCP)
+- Access 250+ APIs and 3000+ tools through MCP
 - Clean separation between agent logic and API integration
 
 ## Example
 
 https://github.com/user-attachments/assets/652a0cc1-0579-418d-a3fb-b15aaaddfe31
 
-The complete code for running this example is [in this repository](https://github.com/krasserm/agent-auth).
+The complete code is at [github.com/krasserm/agent-auth](https://github.com/krasserm/agent-auth). Below is an overview of the key steps needed to authorize an agent to use Google Calendar on behalf of a user:
 
-- [`setup_mcp_server.py`](setup_mcp_server.py) creates MCP servers for Gmail and Google Calendar with the [Composio Python library](https://github.com/ComposioHQ/composio-base-py)
-- [`use_mcp_server_pydantic_ai.py`](use_mcp_server_pydantic_ai.py) runs `o4-mini` as Pydantic AI agent configured with the Gmail and Google Calendar MCP servers
-- [`use_mcp_server_gemini.py`](use_mcp_server_gemini.py) runs `gemini-2.5-flash` with the `google-genai` SDK configured with the Google Calendar MCP server.
-
-Here's a brief overview of the key steps, using Google Calendar as an example:
-
-1. Install the [Composio Python library](https://github.com/ComposioHQ/composio-base-py).
+1. Install the [Composio Python library](https://github.com/ComposioHQ/composio-base-py), used to access their [REST API](https://docs.composio.dev/api-reference).
 
    ```bash
    pip install composio-client
    ```
 
-2. Create an auth configuration for the `googlecalendar` API, with `OAUTH2` as `authScheme`.
+2. Create an auth configuration for the [googlecalendar](https://docs.composio.dev/toolkits/googlecalendar) toolkit, using `OAUTH2` as `authScheme`.
 
    ```python
    client = Composio(api_key=os.getenv("COMPOSIO_API_KEY"))
@@ -59,7 +54,7 @@ Here's a brief overview of the key steps, using Google Calendar as an example:
    auth_config_id = response.auth_config.id
    ```
 
-3. Create a connected account and link an application-defined `user_id` to it (`martin` in this example).
+3. Add a connected account to the auth config and link a `user_id` to it. That's the id of a user managed by your application, not by Composio.
 
    ```python
    response = client.connected_accounts.create(
@@ -68,7 +63,7 @@ Here's a brief overview of the key steps, using Google Calendar as an example:
    )
    ```
 
-4. Initiate the authorization process by redirecting to an OAuth consent screen in a browser window. 
+4. Initiate the authorization process by redirecting to an OAuth consent screen in a browser window. After completion, the connected account is authorized to use Google Calendar on behalf of the user who granted access.
 
    ```python
    import webbrowser
@@ -94,7 +89,7 @@ Here's a brief overview of the key steps, using Google Calendar as an example:
    # <uuid> is a string of pattern 12345678-90ab-cdef-1234-567890abcdef
    ```
 
-7. Configure an agent with the MCP server URL to access tools authorized in step 4.
+7. Configure a [Pydantic AI](https://ai.pydantic.dev/) agent with the `mcp_url` so that it can use Google Calendar on behalf of the user who granted access in step 4.
 
    ```python
    from pydantic_ai import Agent
@@ -109,8 +104,7 @@ Here's a brief overview of the key steps, using Google Calendar as an example:
 
     async with agent:
         result = await agent.run(
-            "List my Sep 2025 calendar events and save them as draft to my gmail account "
-            "(subject: Sep 2025 events, recipient: martin@example.com)."
+            "List my Sep 2025 calendar events"
         )
     
     print(result.output)

@@ -2,6 +2,7 @@ import asyncio
 import json
 import os
 
+import dotenv
 from google import genai
 from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
@@ -27,4 +28,5 @@ async def main():
                 
 
 if __name__ == "__main__":
+    dotenv.load_dotenv()
     asyncio.run(main())
