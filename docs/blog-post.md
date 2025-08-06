@@ -12,16 +12,19 @@ Connect your agents to 250+ APIs and 3000+ tools with [model context protocol](h
 ![architecture](architecture.png)
 
 **Your Application**
+
 - Agents connect to Composio MCP servers and use their tools
 - Agents act on behalf of users that authorized API access
 - Agents focus on reasoning and tool usage, not plumbing
 
 **Composio Layer**
+
 - MCP servers act as protocol bridges to external APIs
 - Each API has auth configs, with a connected account per user
 - Auth tokens are stored securely, supporting OAuth2, API keys, etc.
 
 **Key Benefits**
+
 - No OAuth flows or token management in your code
 - Access 250+ APIs and 3000+ tools through MCP
 - Clean separation between agent logic and API integration
@@ -30,82 +33,82 @@ Connect your agents to 250+ APIs and 3000+ tools with [model context protocol](h
 
 https://github.com/user-attachments/assets/0dcf0bc9-06da-429f-a4ce-a4348058eb54
 
-The complete code is at [github.com/krasserm/agent-auth](https://github.com/krasserm/agent-auth). Below is an overview of the key steps needed to authorize an agent to use Google Calendar on behalf of a user:
+The complete code is at [github.com/krasserm/agent-auth](https://github.com/krasserm/agent-auth). What follows is an overview of the key steps needed to authorize an agent to use Google Calendar on behalf of a user:
 
-1. Install the [Composio Python library](https://github.com/ComposioHQ/composio-base-py), used to access their [REST API](https://docs.composio.dev/api-reference).
+Install the [Composio Python library](https://github.com/ComposioHQ/composio-base-py), used to access the [Composio REST API](https://docs.composio.dev/api-reference).
 
-   ```bash
-   pip install composio-client
-   ```
+```bash
+pip install composio-client
+```
 
-2. Create an auth configuration for the [googlecalendar](https://docs.composio.dev/toolkits/googlecalendar) toolkit, using `OAUTH2` as `authScheme`.
+Create an auth configuration for the [googlecalendar](https://docs.composio.dev/toolkits/googlecalendar) toolkit, using `OAUTH2` as `authScheme`.
 
-   ```python
-   client = Composio(api_key=os.getenv("COMPOSIO_API_KEY"))
+```python
+client = Composio(api_key=os.getenv("COMPOSIO_API_KEY"))
 
-   response = client.auth_configs.create(
-       toolkit={"slug": "googlecalendar"},
-       auth_config={
-           "name": "calendar-example", 
-           "type": "use_composio_managed_auth",
-           "authScheme": "OAUTH2"
-       }
-   )
-   auth_config_id = response.auth_config.id
-   ```
+response = client.auth_configs.create(
+    toolkit={"slug": "googlecalendar"},
+    auth_config={
+        "name": "calendar-example", 
+        "type": "use_composio_managed_auth",
+        "authScheme": "OAUTH2"
+    }
+)
+auth_config_id = response.auth_config.id
+```
 
-3. Add a connected account to the auth config and link a `user_id` to it. That's the id of a user managed by your application, not by Composio.
+Add a connected account to the auth config and link a `user_id` to it. That's the id of a user managed by your application, not by Composio.
 
-   ```python
-   response = client.connected_accounts.create(
-       auth_config={"id": auth_config_id},
-       connection={"user_id": "martin"},
-   )
-   ```
+```python
+response = client.connected_accounts.create(
+    auth_config={"id": auth_config_id},
+    connection={"user_id": "martin"},
+)
+```
 
-4. Initiate the authorization process by redirecting to an OAuth consent screen in a browser window. After completion, the connected account is authorized to use Google Calendar on behalf of the user who granted access.
+Initiate the authorization process by redirecting to an OAuth consent screen in a browser window. After completion, the connected account is authorized to use Google Calendar on behalf of the user who granted access.
 
-   ```python
-   import webbrowser
+```python
+import webbrowser
 
-   webbrowser.open(response.connection_data.val.redirect_url)
-   ```
+webbrowser.open(response.connection_data.val.redirect_url)
+```
 
-5. Create an MCP server for the auth config created in step 2 and specify the tools that should be exposed.
+Create an MCP server for the auth config created in step 2 and specify the tools that should be exposed.
 
-   ```python
-   result = client.mcp.create(
-       name="calendar-mcp-server",
-       auth_config_ids=[auth_config_id],
-       allowed_tools=["GOOGLECALENDAR_FIND_EVENT"]
-   )
-   ```
+```python
+result = client.mcp.create(
+    name="calendar-mcp-server",
+    auth_config_ids=[auth_config_id],
+    allowed_tools=["GOOGLECALENDAR_FIND_EVENT"]
+)
+```
 
-6. Create an MCP server URL that uses the connected account linked to `martin`.
+Create an MCP server URL that uses the connected account linked to `martin`.
 
-   ```python
-   mcp_url = result.mcp_url.replace("transport=sse", "user_id=martin")
-   # i.e. https://mcp.composio.dev/composio/server/<uuid>?user_id=martin
-   # <uuid> is a string of pattern 12345678-90ab-cdef-1234-567890abcdef
-   ```
+```python
+mcp_url = result.mcp_url.replace("transport=sse", "user_id=martin")
+# i.e. https://mcp.composio.dev/composio/server/<uuid>?user_id=martin
+# <uuid> is a string of pattern 12345678-90ab-cdef-1234-567890abcdef
+```
 
-7. Configure a [Pydantic AI](https://ai.pydantic.dev/) agent with the `mcp_url` so that it can use Google Calendar on behalf of the user who granted access in step 4.
+Configure a [Pydantic AI](https://ai.pydantic.dev/) agent with the `mcp_url` so that it can use Google Calendar on behalf of the user who granted access in step 4.
 
-   ```python
-   from pydantic_ai import Agent
-   from pydantic_ai.mcp import MCPServerStreamableHTTP
+```python
+from pydantic_ai import Agent
+from pydantic_ai.mcp import MCPServerStreamableHTTP
 
-   agent = Agent(
-       'openai:o4-mini',
-       toolsets=[
-           MCPServerStreamableHTTP(mcp_url),  
-       ]
-   )
+agent = Agent(
+    'openai:o4-mini',
+    toolsets=[
+        MCPServerStreamableHTTP(mcp_url),  
+    ]
+)
 
-    async with agent:
-        result = await agent.run(
-            "List my Sep 2025 calendar events"
-        )
-    
-    print(result.output)
-   ```
+async with agent:
+    result = await agent.run(
+        "List my Sep 2025 calendar events"
+    )
+
+print(result.output)
+```
