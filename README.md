@@ -36,3 +36,5 @@ Have a conversation with an agent that uses the Gmail and Google Calendar MCP se
 ```bash
 uv run python examples/use_mcp_server_pydantic_ai.py
 ```
+
+https://github.com/user-attachments/assets/0dcf0bc9-06da-429f-a4ce-a4348058eb54

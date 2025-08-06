@@ -5,7 +5,7 @@ Your agent needs to read from your Google Calendar and send emails through Gmail
 Connect your agents to 250+ APIs and 3000+ tools with [model context protocol](https://modelcontextprotocol.io/) (MCP) and [Composio](https://composio.dev/). Composio handles authorization, remote MCP servers and tool execution, your application focuses on agentic reasoning and tool usage. 
 
 > [!NOTE]  
-> Disclaimer: I'm not affiliated with Composio, I'm just a happy user. What they do is IMO the right separation of concerns when building agentic applications.
+> I'm not affiliated with Composio, I'm just a happy user. What they do is IMO the right separation of concerns when building agentic applications.
 
 ## Architecture
 
