@@ -4,7 +4,7 @@ Your agent needs to access Google Calendar and Gmail. Simple, right? Until you r
 
 This project shows how to connect agents to 250+ APIs using [Composio](https://composio.dev/) and [Model Context Protocol](https://modelcontextprotocol.io/) (MCP). Composio handles authorization and tool execution, so your agents focus on reasoning, not plumbing.
 
-More details in this [blog post](docs/blog-post.md).
+More details in this [blog post](https://gradion-ai.github.io/agents-nanny/2025/08/06/agent-authorization-without-the-pain/).
 
 ## Setup
 
