@@ -28,7 +28,7 @@ Connect your agents to 250+ APIs and 3000+ tools with [model context protocol](h
 
 ## Example
 
-https://github.com/user-attachments/assets/652a0cc1-0579-418d-a3fb-b15aaaddfe31
+https://github.com/user-attachments/assets/0dcf0bc9-06da-429f-a4ce-a4348058eb54
 
 The complete code is at [github.com/krasserm/agent-auth](https://github.com/krasserm/agent-auth). Below is an overview of the key steps needed to authorize an agent to use Google Calendar on behalf of a user:
 
